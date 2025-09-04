@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-<form action="/join" method="POST">
+    <form action="/register" method="post">
         <div class="mb-3">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
         </div>
@@ -13,17 +13,11 @@
             <input autocomplete="off" class="form-control mx-auto w-auto" name="email" placeholder="Email" type="email">
         </div>
         <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="city" placeholder="City" type="text">
-        </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="country" placeholder="Country" type="country">
-        </div>
-        <div class="mb-3">
             <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
         </div>
         <div class="mb-3">
             <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm Password" type="password">
         </div>
-        <button class="btn btn-primary" type="submit">Join</button>
-</form>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
 {% endblock %}

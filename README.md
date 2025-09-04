@@ -9,6 +9,16 @@ https://flask.palletsprojects.com/en/stable/quickstart/
 _Simple project structure_
 https://www.geeksforgeeks.org/python/how-to-build-a-web-app-using-flask-and-sqlite-in-python/
 
+https://www.freepik.com/free-photos-vectors/funny-travel
+
+### Run app
+
+In Dev workspace
+
+```shell
+$ flask run --debug
+```
+
 ---
 
 Question (prompt to AI) :

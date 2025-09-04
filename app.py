@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request
+from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
+
+from helpers import apology, login_required
 
 app = Flask(__name__)
 
@@ -11,7 +14,7 @@ def index():
 connect = sqlite3.connect('database.db')
 connect.execute(
     'CREATE TABLE IF NOT EXISTS PARTICIPANTS (name TEXT, \
-    email TEXT, city TEXT, country TEXT, phone TEXT)')
+        email TEXT, city TEXT, country TEXT, password TEXT)')
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -20,12 +23,12 @@ def join():
         email = request.form['email']
         city = request.form['city']
         country = request.form['country']
-        phone = request.form['phone']
+        password = generate_password_hash(request.form.get("password")) # request.form['password']
         with sqlite3.connect("database.db") as users:
             cursor = users.cursor()
             cursor.execute("INSERT INTO PARTICIPANTS \
             (name,email,city,country,phone) VALUES (?,?,?,?,?)",
-                           (name, email, city, country, phone))
+                           (name, email, city, country, password))
             users.commit()
         return render_template("index.html")
     else:
