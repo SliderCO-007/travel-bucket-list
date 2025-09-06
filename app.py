@@ -21,9 +21,9 @@ def index():
 
     return render_template('index.html')
 
-db = sqlite3.connect('database.db')
-db.execute(
-    'CREATE TABLE IF NOT EXISTS PARTICIPANTS (username TEXT, \
+connect = sqlite3.connect('database.db')
+connect.execute(
+    'CREATE TABLE IF NOT EXISTS PARTICIPANTS (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, \
         email TEXT, city TEXT, state TEXT, country TEXT, password TEXT)')
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -67,28 +67,23 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        # Query database for username
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get(
-                "username")
-        )
-        db.close()
-        # with sqlite3.connect("database.db") as users:
-        #     cursor = users.cursor()
-        #     cursor.execute("SELECT * FROM participants WHERE username = ?", request.form.get(
-        #                    "username"))
-        #     rows = cursor.fetchall()
-        #     print(rows)
+        with sqlite3.connect("database.db") as users:
+            cursor = users.cursor()
+            print(request.form.get("username"))
+            cursor.execute("SELECT * FROM participants WHERE username = ?", [request.form.get(
+                           "username")])
+            rows = cursor.fetchall()
+        print(rows)
 
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
+            rows[0][6], request.form.get("password")
         ):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0][0]
 
         # Redirect user to home page
         return redirect("/")
@@ -98,6 +93,7 @@ def login():
         return render_template("login.html")
 
 @app.route('/participants')
+@login_required
 def participants():
     connect = sqlite3.connect('database.db')
     cursor = connect.cursor()
