@@ -29,7 +29,7 @@
     </head>
 
     <body>
-    <nav class="bg-primary-subtle border navbar navbar-expand-md navbar-light">
+    <nav class="bg-primary-subtle border navbar navbar-expand-md navbar-light" id="navigation">
       <div class="container-fluid">
         <a class="navbar-brand" href="/"
           ><span class="blue playfair-navbar-brand">Travel Bucket List</span></a
@@ -48,8 +48,8 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/list">Bucket List</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/map">Map View</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/list">List</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/map">Map</a></li>
                             <li class="nav-item"><a class="nav-link" href="/journal">Journal</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">

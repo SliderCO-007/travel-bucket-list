@@ -28,7 +28,18 @@ connect.execute(
         email TEXT, city TEXT, state TEXT, country TEXT, password TEXT)')
 
 
-@app.route('/add')
+@app.route('/search')
+def find():
+    return render_template("search.html")
+
+@app.route('/map')
+def map():
+    return render_template("map.html")
+
+@app.route('/journal')
+def journal():
+    return render_template("journal.html")
+
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
