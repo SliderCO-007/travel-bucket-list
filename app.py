@@ -13,18 +13,22 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 @app.route('/')
-@app.route('/home')
+@app.route('/list')
+@login_required
 def index():
     # check user account amount
-    # current_user = session["user_id"]
+    current_user = session["user_id"]
     # print(current_user)
 
-    return render_template('index.html')
+    return render_template('list.html')
 
 connect = sqlite3.connect('database.db')
 connect.execute(
     'CREATE TABLE IF NOT EXISTS PARTICIPANTS (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, \
         email TEXT, city TEXT, state TEXT, country TEXT, password TEXT)')
+
+
+@app.route('/add')
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -41,14 +45,13 @@ def join():
             (username,email,city,state,country,password) VALUES (?,?,?,?,?,?)",
                            (username, email, city, state, country, password))
             users.commit()
-        return render_template("index.html")
+        return render_template("list.html")
     else:
         return render_template('join.html')
 
 
-
-# ColoradoBatman
-# Batman
+# Username: Curtis
+# Password: Batman
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -73,7 +76,7 @@ def login():
             cursor.execute("SELECT * FROM participants WHERE username = ?", [request.form.get(
                            "username")])
             rows = cursor.fetchall()
-        print(rows)
+        # print(rows)
 
 
         # Ensure username exists and password is correct
