@@ -87,10 +87,32 @@ def lookup(searchText):
     my_list = response.json()
     my_dict = my_list["pages"][0]
     print(f'my_dict: {my_dict}')
+    my_title = my_dict['title']
+    
+    # Use title to get better image
+    headers = {
+        'User-Agent': 'TravelBucketListApp/1.0 (https://your-website.com or your-email@example.com)'
+    }
+    api_url = f'https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&pithumbsize=300&titles={my_title}&format=json&formatversion=2'
+    try:
+        response = requests.get(api_url, headers=headers)
+        response.raise_for_status() # This will raise an exception for a 403 error
+    # ... rest of your code ...
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP error occurred: {err}")
+        print(response.text) # Check the server's error message
+    except Exception as err:
+        print(f"An unexpected error occurred: {err}")
+    img_response = response.json()
+    print(f'img_response: {img_response}')
+    pages = img_response["query"]["pages"]
+    img_url = pages[0]["thumbnail"]["source"]
 
     my_key = my_dict['key']
     my_description = my_dict['description']
-    my_url = my_dict['thumbnail']['url']
+    # Uses thumbnail from the initial search API which is of a very low quality
+    # my_url = my_dict['thumbnail']['url']
+    my_url = img_url
 
     new_dict = {
         'key': my_key,
