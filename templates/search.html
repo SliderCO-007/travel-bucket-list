@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block main %}
+    <form action="/search" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="searchterm" placeholder="Search Term" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+
+{% if searchResults %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <img src="{{ searchResults.url_value }}" class="card-img-top" alt="thumbnail of {{ searchResults.key_value }}">
+                    <h5 class="card-title">{{ searchResults.key_value }}</h5>
+                    <p class="card-text">{{ searchResults.description_value }}</p>
+                    <a href="#" class="btn btn-primary">Add to Travel Bucket List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

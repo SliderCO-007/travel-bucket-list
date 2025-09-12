@@ -1,6 +1,5 @@
 import requests
 from dotenv import load_dotenv
-import os
 
 from flask import redirect, render_template, session
 from functools import wraps
@@ -65,24 +64,43 @@ def login_required(f):
 #         print(f"Data parsing error: {e}")
 #     return None
 
-# TripAdvisor API Key
-api_key = os.getenv("API_KEY")
+# Wikipedia API
+# https://api.wikimedia.org/wiki/Core_REST_API
+
+# Troubleshooting research
+# https://www.sqlpey.com/python/solved-how-to-pass-authorization-header/
 
 
 def lookup(searchText):
     """Look up quote for symbol."""
-    url = f"https://api.content.tripadvisor.com/api/v1/location/search?searchQuery={searchText}&language=en&key={api_key}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an error for HTTP error responses
-        location_data = response.json()
-        return {
-            "locationId": location_data["location_id"],
-            "price": quote_data["latestPrice"],
-            "symbol": symbol.upper()
-        }
-    except requests.RequestException as e:
-        print(f"Request error: {e}")
-    except (KeyError, ValueError) as e:
-        print(f"Data parsing error: {e}")
-    return None
+    language_code = 'en'
+    search_query = searchText
+    number_of_results = 1
+    headers = {
+        'User-Agent': 'Travel Bucket List'
+    }
+    base_url = 'https://api.wikimedia.org/core/v1/wikipedia/'
+    endpoint = '/search/page'
+    url = base_url + language_code + endpoint
+    parameters = {'q': search_query, 'limit': number_of_results, 'pithumbsize': 400}
+    response = requests.get(url, params=parameters, headers=headers)
+    my_list = response.json()
+    my_dict = my_list["pages"][0]
+    print(f'my_dict: {my_dict}')
+
+    my_key = my_dict['key']
+    my_description = my_dict['description']
+    my_url = my_dict['thumbnail']['url']
+
+    new_dict = {
+        'key': my_key,
+        'description': my_description,
+        'url': my_url
+    }
+
+    ### Need to Extract the values from the results to display to the user
+    return {
+        "key_value": new_dict['key'],
+        "description_value": new_dict['description'],
+        "url_value": new_dict['url']
+    }

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Index
+List
 {% endblock %}
 
 {% block main %}
@@ -9,8 +9,6 @@ Index
         <h1>Hello {{ username }}, here is your Travel Bucket List!</h1>
         {% endif %}
         <h1>There are no destinations in your Travel Bucket List</h1>
-        <h3>Click <a href="/add">here</a> to add a destination.</h3>
+        <h3>Click <a href="/search">here</a> to add a destination.</h3>
 
-        <button class="btn" type="button" onclick="window.location.href='{{ url_for('join') }}';">Fill form to get updates</button><br/>
-        <button class="btn" type="button" onclick="window.location.href='{{ url_for('participants') }}';">Check participant list</button>
 {% endblock %}

@@ -2,8 +2,9 @@ from flask import Flask, render_template, redirect, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
+import json
 
-from helpers import apology, login_required
+from helpers import apology, login_required, lookup
 
 app = Flask(__name__)
 
@@ -27,18 +28,30 @@ connect.execute(
     'CREATE TABLE IF NOT EXISTS PARTICIPANTS (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, \
         email TEXT, city TEXT, state TEXT, country TEXT, password TEXT)')
 
+connect.execute(
+    'CREATE TABLE IF NOT EXISTS bucket_lists ( \
+    id INTEGER PRIMARY KEY AUTOINCREMENT, \
+    user_id INTEGER, \
+    name TEXT NOT NULL, \
+    description TEXT, \
+    url TEXT, \
+    FOREIGN KEY (user_id) REFERENCES participants (id) ON DELETE CASCADE)')
 
-@app.route('/search')
+
+@app.route('/search', methods=['GET', 'POST'])
 def find():
-    return render_template("search.html")
+    if request.method == 'POST':
+
+        searchResults = lookup(request.form.get("searchterm"))
+        # print(searchResults)
+        return render_template("search.html", searchResults=searchResults)
+
+    else:
+        return render_template("search.html")
 
 @app.route('/map')
 def map():
     return render_template("map.html")
-
-@app.route('/journal')
-def journal():
-    return render_template("journal.html")
 
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -60,9 +73,15 @@ def join():
     else:
         return render_template('join.html')
 
+# @app.route('/add', methods=['POST'])
+# def add():
+#     if request.method == 'POST':
 
+
+# Test Creds
 # Username: Curtis
 # Password: Batman
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -106,6 +125,8 @@ def login():
     else:
         return render_template("login.html")
 
+# Route is currently unused but would be implemented for admins in
+# a real world project
 @app.route('/participants')
 @login_required
 def participants():
@@ -125,7 +146,6 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
-
 
 
 if __name__ == '__main__':

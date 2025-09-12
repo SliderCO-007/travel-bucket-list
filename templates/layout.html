@@ -24,7 +24,7 @@
         href="{{ url_for('static', filename='styles.css') }}"
         />
 
-        <title>C$50 Finance: {% block title %}{% endblock %}</title>
+        <title>TBL: {% block title %}{% endblock %}</title>
 
     </head>
 
@@ -49,8 +49,8 @@
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/list">List</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/search">Search</a></li>
                             <li class="nav-item"><a class="nav-link" href="/map">Map</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/journal">Journal</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
@@ -73,7 +73,7 @@
             </header>
         {% endif %}
 
-        <main class="container py-5 text-center">
+        <main class="py-5 text-center container-lg">
             {% block main %}{% endblock %}
         </main>
 
