@@ -1,9 +1,113 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} Map {% endblock %} {% block main
+%}
+<style>
+  /* Add a subtle shadow to the map for a modern look */
+  #map {
+    height: 600px;
+    width: 100%;
+    border-radius: 8px; /* Optional: adds rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+</style>
 
-{% block title %}
-Map
-{% endblock %}
+<div class="container mt-4">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold">Map of My Bucket List</h1>
+    <p class="lead text-muted">
+      A world view of all the destinations you've added.
+    </p>
+  </div>
 
-{% block main %}
-        <h1>This is the awesome map page!</h1>
+  {% if bucket_lists %}
+  <div id="map"></div>
+  {% else %}
+  <div class="alert alert-info text-center" role="alert">
+    <h1>Nothing to map!</h1>
+    <p class="mt-3">
+      Click <a href="/search" class="alert-link">here</a> to add a destination.
+    </p>
+  </div>
+  {% endif %}
+
+  <div class="mt-5 text-center">
+    <h3><a href="/list">View</a> your list of destinations.</h3>
+  </div>
+</div>
+
+<!-- All your script tags for map logic -->
+
+<script
+  async
+  defer
+  src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=marker"
+></script>
+
+<script>
+  function initMap() {
+      const bucketLists = {{ bucket_lists | tojson }};
+      const GOOGLE_MAP_ID = 'def244c9b10600c0481d71e3';
+
+      if (bucketLists.length === 0) {
+          var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 2,
+              center: { lat: 0, lng: 0 },
+              mapId: GOOGLE_MAP_ID,
+          });
+          return;
+      }
+
+      const bounds = new google.maps.LatLngBounds();
+      const infoWindow = new google.maps.InfoWindow();
+
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 2,
+          center: { lat: 0, lng: 0 },
+          mapId: GOOGLE_MAP_ID,
+      });
+
+      // Create a marker for each bucket list item
+      bucketLists.forEach((item) => {
+          const position = { lat: item.latitude, lng: item.longitude };
+          bounds.extend(position);
+
+          // Set the colors for visited and not visited states
+          const pinConfig = item.has_journal
+              ? {
+                  background: "#4CAF50",      // Green background for visited
+                  borderColor: "#388E3C",     // Darker green border
+                  glyphColor: "#388E3C"       // Darker green glyph (center circle)
+                }
+              : {
+                  background: "#F44336",      // Red background for not visited
+                  borderColor: "#9c2020",     // Darker red border
+                  glyphColor: "#9c2020"       // Darker red glyph
+                };
+
+          // Create a PinElement with the custom color properties
+          const pin = new google.maps.marker.PinElement(pinConfig);
+
+          // Create the AdvancedMarkerElement with the custom content
+          const marker = new google.maps.marker.AdvancedMarkerElement({
+              position: position,
+              map: map,
+              title: item.name,
+              content: pin.element, // Use the custom PinElement
+          });
+
+          // Add a click listener to the marker
+          marker.addListener('click', () => {
+              infoWindow.setContent(`
+                  <div class="info-window-content">
+                      <h5>${item.name}</h5>
+                      <p>${item.description}</p>
+                  </div>
+              `);
+              infoWindow.open(map, marker);
+          });
+      });
+
+      map.fitBounds(bounds);
+  }
+</script>
+
 {% endblock %}

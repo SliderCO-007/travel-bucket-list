@@ -1,27 +1,27 @@
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, flash
 from flask_session import Session
+from cachelib.file import FileSystemCache
+from datetime import date
 from werkzeug.security import check_password_hash, generate_password_hash
-import sqlite3
-import json
+# You may also want a dedicated endpoint that just returns JSON
+from flask import jsonify
 
-from helpers import apology, login_required, lookup
+import sqlite3
+import os
+
+from helpers import apology, login_required, lookup, add, delete_item_from_db
 
 app = Flask(__name__)
 
+# Load API key from environment variable for security
+app.config['GOOGLE_MAPS_API_KEY'] = os.environ.get('GOOGLE_MAPS_API_KEY')
+
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_TYPE"] = "cachelib"
+app.config["SESSION_CACHELIB"] = FileSystemCache(cache_dir="flask_session", threshold=500)
 Session(app)
-
-@app.route('/')
-@app.route('/list')
-@login_required
-def index():
-    # check user account amount
-    current_user = session["user_id"]
-    # print(current_user)
-
-    return render_template('list.html')
 
 connect = sqlite3.connect('database.db')
 connect.execute(
@@ -35,7 +35,91 @@ connect.execute(
     name TEXT NOT NULL, \
     description TEXT, \
     url TEXT, \
+    latitude DOUBLE PRECISION NOT NULL, \
+    longitude DOUBLE PRECISION NOT NULL, \
     FOREIGN KEY (user_id) REFERENCES participants (id) ON DELETE CASCADE)')
+
+connect.execute(
+    'CREATE TABLE IF NOT EXISTS journal ( \
+    id INTEGER PRIMARY KEY AUTOINCREMENT, \
+    bucket_list_id INTEGER NOT NULL, \
+    journal_text TEXT NOT NULL, \
+    visited_date DATE, \
+    FOREIGN KEY (bucket_list_id) REFERENCES bucket_lists (id) ON DELETE CASCADE)')
+
+
+# Assume this function gets the raw data from your database
+def rows_to_dicts(cursor):
+    """Convert cursor results to a list of dictionaries."""
+    columns = [column[0] for column in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+# def get_bucket_lists_for_user(user_id):
+#     conn = sqlite3.connect('database.db')
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT id, user_id, name, description, url, latitude, longitude FROM bucket_lists WHERE user_id = ?", (user_id,))
+#     # Call the conversion function here
+#     bucket_lists = rows_to_dicts(cursor)
+#     conn.close()
+#     return bucket_lists
+
+def get_bucket_lists_data(user_id):
+    """Fetches bucket list items and checks for existing journal entries."""
+    with sqlite3.connect("database.db") as bucket:
+        cursor = bucket.cursor()
+        cursor.execute("""
+            SELECT 
+                bl.id, 
+                bl.name, 
+                bl.description, 
+                bl.url, 
+                bl.latitude, 
+                bl.longitude, 
+                COUNT(j.id) > 0 AS has_journal
+            FROM bucket_lists bl
+            LEFT JOIN journal j ON bl.id = j.bucket_list_id
+            WHERE bl.user_id = ?
+            GROUP BY bl.id
+        """, (user_id,))
+        
+        column_names = [description[0] for description in cursor.description]
+        return [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+
+@app.route('/')
+@app.route('/list')
+@login_required
+def index():
+    # check user account amount
+    current_user = session["user_id"]
+
+    bucket_lists_data = get_bucket_lists_data(current_user)
+
+    return render_template('list.html', bucket_lists=bucket_lists_data)
+
+
+@app.route('/my-lists/<int:user_id>')
+def show_user_lists(user_id):
+    bucket_lists_data = get_bucket_lists_data(user_id)
+    return render_template('my_lists.html', bucket_lists=bucket_lists_data)
+
+
+@app.route('/api/user-lists/<int:user_id>')
+def get_user_lists_api(user_id):
+    bucket_lists_data = get_bucket_lists_data(user_id)
+    return jsonify(bucket_lists_data)
+
+
+@app.route("/api/journal/<int:item_id>")
+def get_journal_entries(item_id):
+    """API endpoint to get all journal entries for a given item_id."""
+    with sqlite3.connect("database.db") as bucket:
+        cursor = bucket.cursor()
+        cursor.execute("SELECT visited_date, journal_text FROM journal WHERE bucket_list_id = ? ORDER BY visited_date DESC", (item_id,))
+        column_names = [description[0] for description in cursor.description]
+        journal_entries = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+    
+    return jsonify(journal_entries)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -43,15 +127,22 @@ def find():
     if request.method == 'POST':
 
         searchResults = lookup(request.form.get("searchterm"))
-        # print(searchResults)
+        print(searchResults)
         return render_template("search.html", searchResults=searchResults)
 
     else:
         return render_template("search.html")
 
-@app.route('/map')
-def map():
-    return render_template("map.html")
+@app.route("/map")
+def map_page():
+    # check user account amount
+    current_user = session["user_id"]
+    bucket_lists = get_bucket_lists_data(current_user)
+    return render_template(
+        "map.html",
+        bucket_lists=bucket_lists,
+        GOOGLE_MAPS_API_KEY=app.config['GOOGLE_MAPS_API_KEY']
+    )
 
 
 @app.route('/join', methods=['GET', 'POST'])
@@ -72,10 +163,6 @@ def join():
         return render_template("list.html")
     else:
         return render_template('join.html')
-
-# @app.route('/add', methods=['POST'])
-# def add():
-#     if request.method == 'POST':
 
 
 # Test Creds
@@ -102,7 +189,7 @@ def login():
 
         with sqlite3.connect("database.db") as users:
             cursor = users.cursor()
-            print(request.form.get("username"))
+            # print(request.form.get("username"))
             cursor.execute("SELECT * FROM participants WHERE username = ?", [request.form.get(
                            "username")])
             rows = cursor.fetchall()
@@ -146,6 +233,57 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/addItem", methods=["GET", "POST"])
+def addItem():
+    if request.method == 'POST':
+        try:
+            bucketItemData = add(request.form)
+            print(bucketItemData)
+        except ValueError as e:
+            # Generic ValueError handler, though DataProcessingError is more specific
+            flash(f"Error processing data: {e}")
+            return redirect("/search")
+        
+        return redirect("/")
+    else:
+        return render_template("search.html")
+
+
+@app.route("/delete-item", methods=["POST"])
+def delete_item():
+    item_id = request.form.get("item_id")
+    print(f'item_id: {item_id}')
+    if delete_item_from_db(item_id):
+        flash("Item was successfully deleted.")
+    else:
+        flash("Failed to delete item.")
+    return redirect("/list")
+
+
+@app.route("/record-visit", methods=["POST"])
+def record_visit():
+    item_id = request.form.get("item_id")
+    visited_date = request.form.get("visited_date")
+    journal_text = request.form.get("journal_text")
+
+    if not all([item_id, visited_date, journal_text]):
+        flash("Error: Missing required journal information.", "warning")
+        # item_id isn't getting passed here. :(
+        print(f'journal info: {item_id}, {visited_date}, {journal_text}')
+        return redirect("/list")
+
+    try:
+        with sqlite3.connect("database.db") as bucket:
+            cursor = bucket.cursor()
+            cursor.execute("INSERT INTO journal (bucket_list_id, journal_text, visited_date) VALUES (?, ?, ?)",
+                            (item_id, journal_text, visited_date))
+            bucket.commit()
+        flash("Journal entry successfully recorded!", "success")
+    except sqlite3.Error as e:
+        flash(f"Database error: {e}", "danger")
+    
+    return redirect("/list")
 
 
 if __name__ == '__main__':

@@ -16,3 +16,50 @@ nav .navbar-brand .blue {
   font-variation-settings:
     "wdth" 105;
 }
+
+/*
+    Photo by <a href="https://unsplash.com/@secrettravelguide?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Secret Travel Guide</a>
+*/
+/* Styling for the entire page background on the search page */
+.search-background {
+  /* background-image: url("{{ url_for('static', filename='secret-travel-guide-VNjnidGrH4w-unsplash.jpg') }}"); */
+  background-image: url(./secret-travel-guide-VNjnidGrH4w-unsplash.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Optional: Add a dark overlay to improve readability of text */
+/* .search-background::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+*/
+
+/* Ensure text on the background is readable and the content is properly spaced */
+.search-background h1,
+.search-background p,
+.search-background .card {
+  position: relative;
+  z-index: 1;
+}
+
+/* Make sure the form content is centered and readable */
+.search-background .card {
+  background-color: rgba(255, 255, 255, 0.85);
+  /* Semi-transparent white card background */
+}
+
+/* Ensure the main content block has a proper z-index and spacing */
+main.py-5 {
+  position: relative;
+  z-index: 1;
+}

@@ -1,4 +1,5 @@
 import requests
+import sqlite3
 from dotenv import load_dotenv
 
 from flask import redirect, render_template, session
@@ -86,7 +87,7 @@ def lookup(searchText):
     response = requests.get(url, params=parameters, headers=headers)
     my_list = response.json()
     my_dict = my_list["pages"][0]
-    print(f'my_dict: {my_dict}')
+    # print(f'my_dict: {my_dict}')
     my_title = my_dict['title']
     
     # Use title to get better image
@@ -97,14 +98,13 @@ def lookup(searchText):
     try:
         response = requests.get(api_url, headers=headers)
         response.raise_for_status() # This will raise an exception for a 403 error
-    # ... rest of your code ...
     except requests.exceptions.HTTPError as err:
         print(f"HTTP error occurred: {err}")
         print(response.text) # Check the server's error message
     except Exception as err:
         print(f"An unexpected error occurred: {err}")
     img_response = response.json()
-    print(f'img_response: {img_response}')
+    # print(f'img_response: {img_response}')
     pages = img_response["query"]["pages"]
     img_url = pages[0]["thumbnail"]["source"]
 
@@ -126,3 +126,79 @@ def lookup(searchText):
         "description_value": new_dict['description'],
         "url_value": new_dict['url']
     }
+
+def add(bucketItemData):
+    # get form data
+    title = bucketItemData.get('key_value')
+    description = bucketItemData.get('description_value')
+    url = bucketItemData.get('url_value')
+    # user_id from session
+    current_user = session["user_id"]
+
+    # get location - long/latitude for item
+    headers = {
+        'User-Agent': 'TravelBucketListApp/1.0 (https://your-website.com or your-email@example.com)'
+    }
+    api_url = f'https://en.wikipedia.org/w/api.php?action=query&prop=coordinates&titles={title}&format=json&formatversion=2'
+    try:
+        response = requests.get(api_url, headers=headers)
+        response.raise_for_status() # This will raise an exception for a 403 error
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP error occurred: {err}")
+        print(response.text) # Check the server's error message
+    except Exception as err:
+        print(f"An unexpected error occurred: {err}")
+    response = response.json()
+    # print(f'response: {response}')
+    pages = response["query"]["pages"]
+    title = pages[0]["title"]
+    # Raise ValueError if 'coordinates' key is missing
+    page_data = pages[0]
+    if "coordinates" not in page_data:
+        raise ValueError(f"No coordinates found for '{title}'. \
+                        Try a more specific search term. There may be more than one {title}")
+    latitude = pages[0]["coordinates"][0]["lat"]
+    longitude = pages[0]["coordinates"][0]["lon"]
+
+    # insert all into db
+    print(f'bucketItemData: {current_user}, {title}, {description}, {url}, {latitude}, {longitude}')
+    with sqlite3.connect("database.db") as bucket:
+        cursor = bucket.cursor()
+        cursor.execute("INSERT INTO bucket_lists \
+        (user_id,name,description,url,latitude,longitude) VALUES (?,?,?,?,?,?)",
+                        (current_user, title, description, url, latitude, longitude))
+        bucket.commit()
+
+
+    # Redirect user to home page
+    return redirect("/")
+
+
+def delete_item_from_db(item_id):
+    """
+    Deletes an item from the bucket_lists table based on its ID.
+    """
+    try:
+        # Use a 'with' statement for the database connection
+        with sqlite3.connect("database.db") as bucket:
+            cursor = bucket.cursor()
+
+            # Execute the DELETE statement with a placeholder
+            # for the item_id to prevent SQL injection.
+            cursor.execute("DELETE FROM bucket_lists WHERE id = ?", (item_id,))
+            
+            # The 'with' statement automatically handles the commit,
+            # but it is good practice to include it explicitly.
+            bucket.commit()
+
+            # Optional: Check if a row was actually deleted.
+            if cursor.rowcount > 0:
+                print(f"Successfully deleted item with ID: {item_id}")
+                return True
+            else:
+                print(f"No item found with ID: {item_id}")
+                return False
+
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return False

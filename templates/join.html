@@ -1,40 +1,53 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Register
+    Join
 {% endblock %}
 
 {% block main %}
-<div class="mb-3">
-    <h1>Register now and create your <i>Travel Bucket List</i>!</h1>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">Create Your Account</h1>
+                <p class="lead text-muted">Join now and start building your Travel Bucket List!</p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form class="row g-4" action="/join" method="POST">
+                        <div class="col-md-6">
+                            <input type="text" autofocus class="form-control" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-control" name="password" placeholder="Password" type="password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password" required>
+                        </div>
+                        <hr class="mt-4">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="city" placeholder="City" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="state" placeholder="State / Province" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="zip" placeholder="Zip" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="country" placeholder="Country" required>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary w-50" type="submit">Submit form</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<form class="row g-5" action="/join" method="POST">
-  <div class="col-md-6">
-    <input type="text" autofocus class="form-control" name="username" placeholder="Username" required>
-  </div>
-  <div class="col-md-6">
-    <input class="form-control" name="password" placeholder="Password" type="password" required>
-  </div>
-  <div class="col-md-6">
-    <input type="email" class="form-control" name="email" placeholder="Email" required>
-  </div>
-  <div class="col-md-6">
-    <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password" required>
-  </div>
-  <div class="col-md-6">
-    <input type="text" class="form-control" name="city" placeholder="City" required>
-  </div>
-  <div class="col-md-6">
-    <input type="text" class="form-control" name="state" placeholder="State / Province" required>
-  </div>
-  <div class="col-md-6">
-    <input type="text" class="form-control" name="zip" placeholder="Zip" required>
-  </div>
-  <div class="col-md-6">
-    <input type="text" class="form-control" name="country" placeholder="Country" required>
-  </div>
-  <div class="col-12">
-    <button class="btn btn-primary" type="submit">Submit form</button>
-  </div>
-</form>
 {% endblock %}

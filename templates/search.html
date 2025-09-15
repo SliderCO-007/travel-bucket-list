@@ -1,31 +1,77 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} Search {% endblock %} {% block
+body_class %}search-background{% endblock %} {% block main %}
+<div class="container mt-4 search-background">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Find Your Next Destination</h1>
+        <p class="lead text-muted">
+          Search Wikipedia for places to add to your bucket list.
+        </p>
+      </div>
 
-{% block title %}
-    Search
-{% endblock %}
-
-{% block main %}
-    <form action="/search" method="post">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="searchterm" placeholder="Search Term" type="text">
+      <form action="/search" method="post">
+        <div class="input-group mb-3">
+          <input
+            autocomplete="off"
+            autofocus
+            class="form-control"
+            name="searchterm"
+            placeholder="Search for a place..."
+            type="text"
+          />
+          <button class="btn btn-primary" type="submit">Search</button>
         </div>
-        <button class="btn btn-primary" type="submit">Search</button>
-    </form>
+      </form>
 
-{% if searchResults %}
-<div class="container">
-    <div class="row mt-5">
-        <div class="col d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <img src="{{ searchResults.url_value }}" class="card-img-top" alt="thumbnail of {{ searchResults.key_value }}">
-                    <h5 class="card-title">{{ searchResults.key_value }}</h5>
-                    <p class="card-text">{{ searchResults.description_value }}</p>
-                    <a href="#" class="btn btn-primary">Add to Travel Bucket List</a>
+      {% if searchResults %}
+      <div class="mt-5">
+        <form id="itemForm" action="/addItem" method="post" novalidate>
+          <div class="card shadow-sm bg-white">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img
+                  src="{{ searchResults.url_value }}"
+                  class="img-fluid rounded-start"
+                  alt="Thumbnail of {{ searchResults.key_value }}"
+                />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title fw-bold">
+                    {{ searchResults.key_value }}
+                  </h5>
+                  <p class="card-text text-muted">
+                    {{ searchResults.description_value }}
+                  </p>
+                  <div class="mt-auto">
+                    <input
+                      type="hidden"
+                      name="key_value"
+                      value="{{ searchResults.key_value }}"
+                    />
+                    <input
+                      type="hidden"
+                      name="description_value"
+                      value="{{ searchResults.description_value }}"
+                    />
+                    <input
+                      type="hidden"
+                      name="url_value"
+                      value="{{ searchResults.url_value }}"
+                    />
+                    <button type="submit" class="btn btn-primary w-100">
+                      Add to Travel Bucket List
+                    </button>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
     </div>
+  </div>
 </div>
-{% endif %}
 {% endblock %}
