@@ -24,6 +24,11 @@ app.config["SESSION_CACHELIB"] = FileSystemCache(cache_dir="flask_session", thre
 Session(app)
 
 connect = sqlite3.connect('database.db')
+cursor = connect.cursor()
+
+# Enable foreign key support
+cursor.execute('PRAGMA foreign_keys = ON;')
+
 connect.execute(
     'CREATE TABLE IF NOT EXISTS PARTICIPANTS (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT, \
         email TEXT, city TEXT, state TEXT, country TEXT, password TEXT)')
@@ -125,10 +130,17 @@ def get_journal_entries(item_id):
 @app.route('/search', methods=['GET', 'POST'])
 def find():
     if request.method == 'POST':
-
-        searchResults = lookup(request.form.get("searchterm"))
-        print(searchResults)
-        return render_template("search.html", searchResults=searchResults)
+        try:
+            searchResults = lookup(request.form.get("searchterm"))
+            print(searchResults)
+            return render_template("search.html", searchResults=searchResults)
+        except IndexError:
+            # Generic ValueError handler, though DataProcessingError is more specific
+            flash(f"Invalid response. Try again!")
+            return redirect("/search")
+        
+        
+        
 
     else:
         return render_template("search.html")

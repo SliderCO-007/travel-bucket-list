@@ -17,6 +17,13 @@ nav .navbar-brand .blue {
     "wdth" 105;
 }
 
+.bad-script-regular {
+  font-family: "Bad Script", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
 /*
     Photo by <a href="https://unsplash.com/@secrettravelguide?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Secret Travel Guide</a>
 */
@@ -30,8 +37,21 @@ nav .navbar-brand .blue {
   background-attachment: fixed;
 }
 
+/*
+  Photo by <a href="https://unsplash.com/@reisetopia?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">reisetopia</a>
+*/
+/* Styling for the entire page background on the list page */
+.list-background {
+  /* background-image: url("{{ url_for('static', filename='secret-travel-guide-VNjnidGrH4w-unsplash.jpg') }}"); */
+  background-image: url(./reisetopia-6qfaxB-cm0o-unsplash.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 /* Optional: Add a dark overlay to improve readability of text */
-/* .search-background::before {
+.list-background.overlay::before {
   content: "";
   position: fixed;
   top: 0;
@@ -42,7 +62,29 @@ nav .navbar-brand .blue {
   z-index: -1;
 }
 
+/*
+  Photo by <a href="https://unsplash.com/@cristiaanmacovei?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Cristian Macovei</a>
 */
+/* Styling for the entire page background on the map page */
+.map-background {
+  background-image: url(./cristian-macovei-af7YjaPMce0-unsplash.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/*
+  Photo by <a href="https://unsplash.com/@reisetopia?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">reisetopia</a>
+*/
+/* Styling for the entire page background on the join page */
+.join-background {
+  background-image: url(./reisetopia-6qfaxB-cm0o-unsplash.jpg);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 
 /* Ensure text on the background is readable and the content is properly spaced */
 .search-background h1,

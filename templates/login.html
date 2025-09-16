@@ -1,107 +1,130 @@
-{% extends "layout.html" %}
-
-{% block title %}
-    Log In
-{% endblock %}
-
-{% block main %}
+{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block
+main %}
 <!-- Add custom CSS styling for this page -->
 <style>
-    /* Full-screen background image */
-    body {
-        /*
+  /* Full-screen background image */
+  body {
+    /*
         Photo by <a href="https://unsplash.com/@peter_mc_greats?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
             Pietro De Grandi</a>
         */
-        background: url("{{ url_for('static', filename='pietro-de-grandi-T7K4aEPoGGk-unsplash.jpg') }}") no-repeat center center fixed;
-        background-size: cover;
-    }
-    /* Semi-transparent overlay to improve text readability */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
-    }
-    /* Main container centered horizontally and vertically */
-    .centered-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        z-index: 10;
-        position: relative;
-        padding: 20px;
-    }
-    /* Card for the login form */
-    .login-card {
-        background: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        padding: 2.5rem;
-    }
-    /* Responsive form width */
-    .login-form-wrapper {
-        max-width: 400px;
-        width: 100%;
-    }
-    /* Spacing and typography */
-    .text-light-shadow {
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    }
+    background: url("{{ url_for('static', filename='pietro-de-grandi-T7K4aEPoGGk-unsplash.jpg') }}")
+      no-repeat center center fixed;
+    background-size: cover;
+  }
+  /* Semi-transparent overlay to improve text readability */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
+  }
+  /* Main container centered horizontally and vertically */
+  .centered-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    z-index: 10;
+    position: relative;
+    padding: 20px;
+  }
+  /* Card for the login form */
+  .login-card {
+    background: rgba(
+      255,
+      255,
+      255,
+      0.95
+    ); /* Semi-transparent white background */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 2.5rem;
+  }
+  /* Responsive form width */
+  .login-form-wrapper {
+    max-width: 400px;
+    width: 100%;
+  }
+  /* Spacing and typography */
+  .text-light-shadow {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  }
 </style>
 
 <div class="overlay"></div>
 
 <div class="centered-container">
-    <div class="container-fluid">
-        <div class="row g-5">
-            <!-- Inspirational Content Column -->
-            <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                <div class="text-white text-light-shadow text-center">
-                    <h1 class="display-3 fw-bold">Life is short!</h1>
-                    <p class="lead fw-normal fs-4">
-                        So DREAM and TRAVEL and SEE THE WORLD.
-                    </p>
-                    <figure class="mt-4">
-                        <blockquote class="blockquote fst-italic">
-                            <p>"Stuff your eyes with wonder, live as if you’d drop dead in ten seconds. See the world. It’s more fantastic than any dream made or paid for in factories."</p>
-                        </blockquote>
-                        <figcaption class="blockquote-footer text-white">
-                            Ray Bradbury
-                        </figcaption>
-                    </figure>
-                </div>
-            </div>
-
-            <!-- Login Form Column -->
-            <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                <div class="login-card login-form-wrapper">
-                    <h2 class="text-center mb-4">Travel Bucket List</h2>
-                    <p class="text-center text-muted mb-4">
-                        Login today to begin creating your own personal bucket list.
-                    </p>
-                    
-                    <form action="/login" method="post">
-                        <div class="mb-3">
-                            <input autofocus class="form-control" name="username" placeholder="Username" type="text" autocomplete="username">
-                        </div>
-                        <div class="mb-3">
-                            <input class="form-control" name="password" placeholder="Password" type="password" autocomplete="current-password">
-                        </div>
-                        <button class="btn btn-primary w-100 mb-3" type="submit">Log In</button>
-                    </form>
-                    
-                    <hr>
-                    
-                    <div class="text-center pt-3">
-                        <p class="text-muted mb-0">Not a member? <a href="/join" class="text-decoration-none">Register now</a></p>
-                    </div>
-                </div>
-            </div>
+  <div class="container-fluid">
+    <div class="row g-5">
+      <!-- Inspirational Content Column -->
+      <div class="col-lg-6 d-flex align-items-center justify-content-center">
+        <div class="text-white text-light-shadow text-center">
+          <h1 class="display-3 fw-bold">Life is short!</h1>
+          <p class="lead fw-normal fs-4">
+            So DREAM and TRAVEL and SEE THE WORLD.
+          </p>
+          <figure class="mt-4">
+            <blockquote class="blockquote fst-italic">
+              <p>
+                "Stuff your eyes with wonder, live as if you’d drop dead in ten
+                seconds. See the world. It’s more fantastic than any dream made
+                or paid for in factories."
+              </p>
+            </blockquote>
+            <figcaption class="blockquote-footer text-white">
+              Ray Bradbury
+            </figcaption>
+          </figure>
         </div>
+      </div>
+
+      <!-- Login Form Column -->
+      <div class="col-lg-6 d-flex align-items-center justify-content-center">
+        <div class="login-card login-form-wrapper">
+          <h2 class="text-center mb-4">Travel Bucket List</h2>
+          <p class="fw-bolder text-center text-muted mb-4">
+            Login to begin creating your own personal bucket list.
+          </p>
+
+          <form action="/login" method="post">
+            <div class="mb-3">
+              <input
+                autofocus
+                class="form-control"
+                name="username"
+                placeholder="Username"
+                type="text"
+                autocomplete="username"
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                class="form-control"
+                name="password"
+                placeholder="Password"
+                type="password"
+                autocomplete="current-password"
+              />
+            </div>
+            <button class="btn btn-primary w-100 mb-3" type="submit">
+              Log In
+            </button>
+          </form>
+
+          <hr />
+
+          <div class="text-center pt-3">
+            <p class="text-muted mb-0">
+              Not a member?
+              <a href="/join" class="text-decoration-none">Register now</a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

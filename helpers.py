@@ -182,6 +182,9 @@ def delete_item_from_db(item_id):
         # Use a 'with' statement for the database connection
         with sqlite3.connect("database.db") as bucket:
             cursor = bucket.cursor()
+            
+            # Enable foreign key support
+            cursor.execute('PRAGMA foreign_keys = ON;')
 
             # Execute the DELETE statement with a placeholder
             # for the item_id to prevent SQL injection.
