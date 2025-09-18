@@ -9,7 +9,7 @@ from flask import jsonify
 import sqlite3
 import os
 
-from helpers import apology, login_required, lookup, add, delete_item_from_db
+from helpers import apology, login_required, lookup, add, delete_item_from_db, is_text_only
 
 app = Flask(__name__)
 
@@ -130,6 +130,13 @@ def get_journal_entries(item_id):
 @app.route('/search', methods=['GET', 'POST'])
 def find():
     if request.method == 'POST':
+        user_input = request.form.get('searchterm')
+      
+        # Ensure user entered text
+        if not is_text_only(user_input):
+            print(f'cleansed user input: {user_input}')
+            return apology("please provide text only", 400)
+
         try:
             searchResults = lookup(request.form.get("searchterm"))
             print(searchResults)
@@ -160,19 +167,36 @@ def map_page():
 @app.route('/join', methods=['GET', 'POST'])
 def join():
     if request.method == 'POST':
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 400)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 400)
+
+        # Ensure the passwords match
+        elif (request.form.get("password") != request.form.get("confirmation")):
+            return apology("the password and confirmation don't match", 400)
+
         username = request.form['username']
         email = request.form['email']
         city = request.form['city']
         state = request.form['state']
         country = request.form['country']
         password = generate_password_hash(request.form.get("password")) # request.form['password']
-        with sqlite3.connect("database.db") as users:
-            cursor = users.cursor()
-            cursor.execute("INSERT INTO PARTICIPANTS \
-            (username,email,city,state,country,password) VALUES (?,?,?,?,?,?)",
-                           (username, email, city, state, country, password))
-            users.commit()
-        return render_template("list.html")
+        try:
+            with sqlite3.connect("database.db") as users:
+                cursor = users.cursor()
+                cursor.execute("INSERT INTO PARTICIPANTS \
+                (username,email,city,state,country,password) VALUES (?,?,?,?,?,?)",
+                            (username, email, city, state, country, password))
+                users.commit()
+        except BaseException as e:
+            print('User already exists')
+            return apology("username already exists", 400)
+        
+        return redirect("/")
     else:
         return render_template('join.html')
 
@@ -180,6 +204,8 @@ def join():
 # Test Creds
 # Username: Curtis
 # Password: Batman
+# Jack / Batman
+# Ruby / Robin
 
 
 @app.route("/login", methods=["GET", "POST"])

@@ -23,6 +23,18 @@ nav .navbar-brand .blue {
   font-style: normal;
 }
 
+.card-img-fixed-height {
+  height: 30vh;
+  /* Adjust the image height based on the viewport height */
+  object-fit: cover;
+}
+
+/* Optional: set a smaller height on small screens */
+@media (max-width: 576px) {
+  .card-img-fixed-height {
+    height: 20vh;
+  }
+}
 
 /*
     Photo by <a href="https://unsplash.com/@secrettravelguide?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Secret Travel Guide</a>
@@ -35,6 +47,18 @@ nav .navbar-brand .blue {
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+/* Optional: Add a dark overlay to improve readability of text */
+.search-background.overlay::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 }
 
 /*
@@ -74,6 +98,18 @@ nav .navbar-brand .blue {
   background-attachment: fixed;
 }
 
+/* Optional: Add a dark overlay to improve readability of text */
+.map-background.overlay::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
 /*
   Photo by <a href="https://unsplash.com/@reisetopia?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">reisetopia</a>
 */
@@ -94,14 +130,64 @@ nav .navbar-brand .blue {
   z-index: 1;
 }
 
-/* Make sure the form content is centered and readable */
-.search-background .card {
+/*Make sure the form content is centered and readable
+ .search-background .card {
   background-color: rgba(255, 255, 255, 0.85);
-  /* Semi-transparent white card background */
-}
+} */
 
 /* Ensure the main content block has a proper z-index and spacing */
 main.py-5 {
   position: relative;
   z-index: 1;
+}
+
+/* Add a transition to the base class for a smooth effect */
+.custom-hover-btn {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Define the hover state */
+.custom-hover-btn:hover {
+  background-color: #5bc0de;
+  /* The solid info background color */
+  color: #fff;
+  /* White text on hover */
+  border-color: #5bc0de;
+  /* Matching border color */
+}
+
+/* Remove default underline and make room for the custom one */
+.nav-link {
+  position: relative;
+  /* Set parent as reference for absolute positioning */
+  text-decoration: none;
+  /* Remove the default underline */
+}
+
+/* Create the pseudo-element for the underline */
+.nav-link::after {
+  content: '';
+  /* Required for pseudo-elements */
+  position: absolute;
+  /* Position relative to the parent .nav-link */
+  bottom: 0;
+  /* Align to the bottom of the link */
+  left: 0;
+  width: 100%;
+  /* Initially, the line has 100% width */
+  height: 2px;
+  /* Set the thickness of the underline */
+  background-color: currentColor;
+  /* Use the current text color */
+  transform: scaleX(0);
+  /* Hide the underline initially by scaling its width to 0 */
+  transition: transform 0.2s ease-out;
+  /* Smoothly animate the scaling over 0.2 seconds */
+}
+
+/* Animate the underline on hover or when the link is focused */
+.nav-link:hover::after,
+.nav-link:focus::after {
+  transform: scaleX(1);
+  /* Reveal the underline by scaling its width to 100% */
 }

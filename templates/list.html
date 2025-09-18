@@ -1,153 +1,176 @@
 {% extends "layout.html" %} {% block title %} List {% endblock %} {% block
-body_class %}list-background {% if bucket_lists %}overlay{% endif %} {%
-endblock%} {% block main %}
-<div class="container mt-4">
-  <div class="p-2 text-dark text-center mb-5">
-    <h1 class="display-5 fw-bold pt-2">My Travel Bucket List</h1>
-    <p class="fw-bolder lead text-muted">
-      A collection of destinations you want to visit.
-    </p>
-  </div>
+body_class %}list-background overlay {% endblock%} {% block main %}
+<div class="centered-container">
+  <div class="container-fluid">
+    <div class="row g-5">
+      <!-- Inspirational Content Column -->
+      {% if bucket_lists %}
+      <div class="col-lg-12 d-flex align-items-center justify-content-center">
+        {% else %}
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+          {% endif %}
+          <div class="text-white text-light-shadow text-center">
+            <h1 class="display-5 fw-bold pt-2">My Travel Bucket List</h1>
+            <span class="fs-3">
+              A collection of destinations you want to visit.
+            </span>
+          </div>
+        </div>
+        {% if bucket_lists %}
+        <div id="lists-container" class="row g-4 justify-content-center">
+          <!-- Cards will be dynamically inserted here by JavaScript -->
+        </div>
+        {% else %}
+        <!-- Login Form Column -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+          <div class="text-white text-light-shadow text-center">
+            <h1>There are no destinations in your Travel Bucket List</h1>
+            <h3 class="mt-3">
+              <button
+                type="button"
+                id="addButton"
+                class="btn btn-outline-info btn-lg rounded-pill custom-hover-btn"
+              >
+                <i class="bi bi-airplane"></i>
+                Add a destination!
+              </button>
+            </h3>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <script>
+        // Javascript for add button
+        document
+          .getElementById('addButton')
+          .addEventListener('click', function () {
+            window.location.href = '/search';
+          });
+      </script>
+      <script>
+        const bucketLists = {{ bucket_lists | tojson }};
+        const container = document.getElementById('lists-container');
 
-  {% if bucket_lists %}
-  <div id="lists-container" class="row g-4">
-    <!-- Cards will be dynamically inserted here by JavaScript -->
-  </div>
-  {% else %}
-  <div class="p-2 text-dark text-center rounded">
-    <h1>There are no destinations in your Travel Bucket List</h1>
-    <h3 class="mt-3">
-      Click <a href="/search" class="alert-link">here</a> to add a destination.
-    </h3>
-  </div>
-  {% endif %}
+        bucketLists.forEach(item => {
+            const wikipediaLink = `https://en.wikipedia.org/wiki/${item.name.replace(/ /g, '_')}`;
 
-  <!-- <div class="bg-light p-2 text-dark bg-opacity-50 mt-3 text-center">
-    <h3><a href="/map">Map</a> your Travel Bucket List.</h3>
-    <h3><a href="/search">Add</a> another destination.</h3>
-  </div> -->
+            // Use the has_journal property to conditionally set button text and class
+            const journalButtonText = item.has_journal ? 'View Journal' : 'Mark Done';
+            const journalButtonClass = item.has_journal ? 'btn-outline-info' : 'btn-outline-success';
+            const journalButtonTarget = item.has_journal ? '#journalHistoryModal' : '#journalModal';
+
+            const cardColumn = document.createElement('div');
+            cardColumn.className = 'col-10 col-md-4 mx-auto px-0';
+
+            cardColumn.innerHTML = `
+                <div class="card h-100 shadow-sm m-1">
+                    <img src="${item.url}" class="card-img-top card-img-fixed-height" alt="${item.name}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">${item.name}</h5>
+                        <p class="fw-bolder card-text text-muted mb-4">${item.description}</p>
+                        <p class="d-none">Coordinates: ${item.latitude}, ${item.longitude}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                    <a href="${wikipediaLink}" target="_blank" class="btn btn-sm btn-outline-primary">Details</a>
+                    <button type="button" class="btn btn-sm ${journalButtonClass}" data-bs-toggle="modal" data-bs-target="${journalButtonTarget}" data-item-id="${item.id}" data-item-name="${item.name}">
+                            ${journalButtonText}
+                    </button>
+                    <form action="/delete-item" method="post" class="d-inline">
+                            <input type="hidden" name="item_id" value="${item.id}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                    </div>
+                </div>
+            `;
+
+                    container.appendChild(cardColumn);
+                });
+
+                // Handle "Mark Done" modal
+        document.addEventListener('DOMContentLoaded', function() {
+            // All your modal script logic should be placed inside this function.
+
+            // Handle "View Journal" modal
+            const journalHistoryModal = document.getElementById('journalHistoryModal');
+            // ... rest of the "View Journal" code ...
+
+            // Handle "Mark Done" modal
+            const journalModal = document.getElementById('journalModal');
+            if (journalModal) {
+                journalModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    if (!button) {
+                        console.error('Error: No button found that triggered the modal.');
+                        return;
+                    }
+                    const itemId = button.getAttribute('data-item-id');
+                    const itemName = button.getAttribute('data-item-name');
+
+                    const modalItemId = journalModal.querySelector('#modalItemId');
+                    const modalItemName = journalModal.querySelector('#modalItemName');
+
+                    if (modalItemId) {
+                        modalItemId.value = itemId;
+                    }
+                    if (modalItemName) {
+                        modalItemName.textContent = itemName;
+                    }
+                });
+            }
+        });
+
+
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const journalHistoryModal = document.getElementById('journalHistoryModal');
+
+                // Add a check to ensure the element was found
+                if (!journalHistoryModal) {
+                    console.error('Error: Modal element with ID "journalHistoryModal" not found.');
+                    return; // Exit the function if the modal element does not exist
+                }
+
+                journalHistoryModal.addEventListener('show.bs.modal', async function (event) {
+                    const button = event.relatedTarget;
+                    const itemId = button.getAttribute('data-item-id');
+                    const itemName = button.getAttribute('data-item-name');
+
+                    const modalBody = journalHistoryModal.querySelector('.modal-body');
+                    const modalTitle = journalHistoryModal.querySelector('#journalHistoryModalLabel');
+                    const addEntryForm = journalHistoryModal.querySelector('#addEntryForm');
+
+                    modalTitle.textContent = `Journal Entries for: ${itemName}`;
+                    addEntryForm.querySelector('#historyModalItemId').value = itemId;
+
+                    modalBody.innerHTML = '<p class="text-center">Loading journal entries...</p>';
+
+                    try {
+                        const response = await fetch(`/api/journal/${itemId}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const entries = await response.json();
+
+                        if (entries.length > 0) {
+                            modalBody.innerHTML = entries.map(entry => `
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-muted">Visited on: ${entry.visited_date}</h6>
+                                        <p class="card-text">${entry.journal_text}</p>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } else {
+                            modalBody.innerHTML = '<p class="text-center text-muted">No journal entries found. Add one below!</p>';
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch journal entries:', error);
+                        modalBody.innerHTML = `<div class="alert alert-danger">Failed to load journal entries.</div>`;
+                    }
+                });
+            });
+      </script>
+      {% endblock %}
+    </div>
+  </div>
 </div>
-
-<script>
-          const bucketLists = {{ bucket_lists | tojson }};
-          const container = document.getElementById('lists-container');
-
-          bucketLists.forEach(item => {
-              const wikipediaLink = `https://en.wikipedia.org/wiki/${item.name.replace(/ /g, '_')}`;
-
-              // Use the has_journal property to conditionally set button text and class
-              const journalButtonText = item.has_journal ? 'View Journal' : 'Mark Done';
-              const journalButtonClass = item.has_journal ? 'btn-outline-info' : 'btn-outline-success';
-              const journalButtonTarget = item.has_journal ? '#journalHistoryModal' : '#journalModal';
-
-              const cardColumn = document.createElement('div');
-              cardColumn.className = 'col-12 col-md-4';
-
-              cardColumn.innerHTML = `
-                  <div class="card h-100 shadow-sm">
-                      <img src="${item.url}" class="card-img-top" alt="${item.name}">
-                      <div class="card-body d-flex flex-column">
-                          <h5 class="card-title fw-bold">${item.name}</h5>
-                          <p class="fw-bolder card-text text-muted mb-4">${item.description}</p>
-                          <p class="d-none">Coordinates: ${item.latitude}, ${item.longitude}</p>
-                      </div>
-                      <div class="card-footer d-flex justify-content-between">
-                        <a href="${wikipediaLink}" target="_blank" class="btn btn-sm btn-outline-primary">Details</a>
-                        <button type="button" class="btn btn-sm ${journalButtonClass}" data-bs-toggle="modal" data-bs-target="${journalButtonTarget}" data-item-id="${item.id}" data-item-name="${item.name}">
-                                ${journalButtonText}
-                        </button>
-                        <form action="/delete-item" method="post" class="d-inline">
-                                <input type="hidden" name="item_id" value="${item.id}">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                      </div>
-                  </div>
-              `;
-              container.appendChild(cardColumn);
-          });
-
-          // Handle "Mark Done" modal
-  document.addEventListener('DOMContentLoaded', function() {
-      // All your modal script logic should be placed inside this function.
-
-      // Handle "View Journal" modal
-      const journalHistoryModal = document.getElementById('journalHistoryModal');
-      // ... rest of the "View Journal" code ...
-
-      // Handle "Mark Done" modal
-      const journalModal = document.getElementById('journalModal');
-      if (journalModal) {
-          journalModal.addEventListener('show.bs.modal', function (event) {
-              const button = event.relatedTarget;
-              if (!button) {
-                  console.error('Error: No button found that triggered the modal.');
-                  return;
-              }
-              const itemId = button.getAttribute('data-item-id');
-              const itemName = button.getAttribute('data-item-name');
-
-              const modalItemId = journalModal.querySelector('#modalItemId');
-              const modalItemName = journalModal.querySelector('#modalItemName');
-
-              if (modalItemId) {
-                  modalItemId.value = itemId;
-              }
-              if (modalItemName) {
-                  modalItemName.textContent = itemName;
-              }
-          });
-      }
-  });
-
-
-
-      document.addEventListener('DOMContentLoaded', function() {
-          const journalHistoryModal = document.getElementById('journalHistoryModal');
-
-          // Add a check to ensure the element was found
-          if (!journalHistoryModal) {
-              console.error('Error: Modal element with ID "journalHistoryModal" not found.');
-              return; // Exit the function if the modal element does not exist
-          }
-
-          journalHistoryModal.addEventListener('show.bs.modal', async function (event) {
-              const button = event.relatedTarget;
-              const itemId = button.getAttribute('data-item-id');
-              const itemName = button.getAttribute('data-item-name');
-
-              const modalBody = journalHistoryModal.querySelector('.modal-body');
-              const modalTitle = journalHistoryModal.querySelector('#journalHistoryModalLabel');
-              const addEntryForm = journalHistoryModal.querySelector('#addEntryForm');
-
-              modalTitle.textContent = `Journal Entries for: ${itemName}`;
-              addEntryForm.querySelector('#historyModalItemId').value = itemId;
-
-              modalBody.innerHTML = '<p class="text-center">Loading journal entries...</p>';
-
-              try {
-                  const response = await fetch(`/api/journal/${itemId}`);
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                  }
-                  const entries = await response.json();
-
-                  if (entries.length > 0) {
-                      modalBody.innerHTML = entries.map(entry => `
-                          <div class="card mb-3">
-                              <div class="card-body">
-                                  <h6 class="card-subtitle mb-2 text-muted">Visited on: ${entry.visited_date}</h6>
-                                  <p class="card-text">${entry.journal_text}</p>
-                              </div>
-                          </div>
-                      `).join('');
-                  } else {
-                      modalBody.innerHTML = '<p class="text-center text-muted">No journal entries found. Add one below!</p>';
-                  }
-              } catch (error) {
-                  console.error('Failed to fetch journal entries:', error);
-                  modalBody.innerHTML = `<div class="alert alert-danger">Failed to load journal entries.</div>`;
-              }
-          });
-      });
-</script>
-{% endblock %}

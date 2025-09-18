@@ -205,3 +205,10 @@ def delete_item_from_db(item_id):
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         return False
+
+def is_text_only(user_input):
+    """Returns True if the string contains only letters and spaces, and is not empty."""
+    if not user_input or user_input.isspace():
+        return False
+    else:
+        return all(char.isalpha() or char.isspace() for char in user_input)
