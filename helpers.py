@@ -47,24 +47,6 @@ def login_required(f):
     return decorated_function
 
 
-# def lookup(symbol):
-#     """Look up quote for symbol."""
-#     url = f"https://finance.cs50.io/quote?symbol={symbol.upper()}"
-#     try:
-#         response = requests.get(url)
-#         response.raise_for_status()  # Raise an error for HTTP error responses
-#         quote_data = response.json()
-#         return {
-#             "name": quote_data["companyName"],
-#             "price": quote_data["latestPrice"],
-#             "symbol": symbol.upper()
-#         }
-#     except requests.RequestException as e:
-#         print(f"Request error: {e}")
-#     except (KeyError, ValueError) as e:
-#         print(f"Data parsing error: {e}")
-#     return None
-
 # Wikipedia API
 # https://api.wikimedia.org/wiki/Core_REST_API
 
@@ -100,7 +82,7 @@ def lookup(searchText):
         response.raise_for_status() # This will raise an exception for a 403 error
     except requests.exceptions.HTTPError as err:
         print(f"HTTP error occurred: {err}")
-        print(response.text) # Check the server's error message
+        # print(response.text) # Check the server's error message
     except Exception as err:
         print(f"An unexpected error occurred: {err}")
     img_response = response.json()
@@ -145,7 +127,7 @@ def add(bucketItemData):
         response.raise_for_status() # This will raise an exception for a 403 error
     except requests.exceptions.HTTPError as err:
         print(f"HTTP error occurred: {err}")
-        print(response.text) # Check the server's error message
+        # print(response.text) # Check the server's error message
     except Exception as err:
         print(f"An unexpected error occurred: {err}")
     response = response.json()
@@ -161,7 +143,7 @@ def add(bucketItemData):
     longitude = pages[0]["coordinates"][0]["lon"]
 
     # insert all into db
-    print(f'bucketItemData: {current_user}, {title}, {description}, {url}, {latitude}, {longitude}')
+    # print(f'bucketItemData: {current_user}, {title}, {description}, {url}, {latitude}, {longitude}')
     with sqlite3.connect("database.db") as bucket:
         cursor = bucket.cursor()
         cursor.execute("INSERT INTO bucket_lists \
