@@ -34,13 +34,13 @@ Install Python (version used is `Python 3.13.7`)
 Create Virtual Environment
 
 ```shell
-python -m venv venv
+$ python -m venv venv
 ```
 
 Activate the Virtual Environment (using Git Bash on Windows)
 
 ```shell
-source ./venv/bin/activate
+$ source ./venv/bin/activate
 ```
 
 Install project dependencies
