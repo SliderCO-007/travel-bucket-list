@@ -9,36 +9,37 @@ that they aspire to visit before their time on Earth expires. Visitors can regis
 then search for destinations and add them to their personal travel bucket list. Once a destination is saved to their list, they can view all of their
 destinations on the main page or on an interactive map. Using the street view, users can see actual images of their destination
 and visualize themselves being there! Finally, users can check the bucket list item off their list and mark it done
-by creating a journal entry to describe the many sites, sounds and adventure they experienced
+by creating a journal entry to describe the many sites, sounds and adventures they experienced
 while reaching their destination.
 
 #### Creative Process:
 
 The initial concept came to me while brainstorming ideas for what I was interested in. Having visited
-many countries and locations, I recognize the value of travel and learning about new cultures. I wanted to create
-something that will make a difference in other people's lives. An application or website that encourages
-others to travel and experience the world knowing that they will grow and learn about themselves and the world. The first
-step was to find an API that would return information about places in the world. Trip Advisor was the first choice but I
-quickly recognized that the Trip Advisor data was very focused on commercial concerns such as restaurants, tours and
+many countries and locations, I recognize the value of travel and learning about new cultures. I've created
+an application to make a difference in other people's lives encouraging them to travel and experience the world
+knowing that they will grow and learn about themselves and the world.
+
+The first step was to find an API that would return information about places in the world. Trip Advisor was the first
+choice but I quickly recognized that the Trip Advisor data was very focused on commercial concerns such as restaurants, tours and
 expeditions. While this is exciting, it is not the type of site I wanted to create. Then I found Wikipedia's
 APIs.
 
 Wikipedia data is vast and more like an online encyclopedia with many API endpoints for
 different types of data. Initially the general search endpoint provided the required data in the response.
-It returns a short description, a thumbnail and a page title. Upon implementing this API call, I realized that
-the image was unacceptable. Since it was a "thumbnail", it returned such low resolution that most images were
+It returns a short description, a thumbnail and a page title. Upon implementing this API call, it was apparent that
+the returned thumbnail image was unacceptable. Since it is a "thumbnail", the image is such a low resolution that most were
 pixelated and grainy when displayed. Further research revealed that Wikipedia provided another endpoint which can be
 called with parameters defining the size of an image needed. So I learned how to stack API calls, or call them
 sequentially. The application now makes a call to the search API then uses the page title in the response to make a
-second API call to retrieve an image of much better quality which is displayed to the user.
+second API call to retrieve a higher quality image which is displayed to the user.
 
 I leveraged many sources to get the API calls working. Wikipedia's documentation for the APIs includes Python
-examples which provided a great starting point. Google's Gemini helped me to manage the data types in the API
+examples which provided a great starting point. Then Google's Gemini helped me to manage the data types in the API
 responses. Dealing with lists and dictionaries made sense to me but I didn't know how to reference, convert and
-create them in some cases. Fortunately, the Python community is vast and I quickly found examples that I could
-translate to my specific use case when searching. Between the Copilot responses embedded in Bing and/or Gemini,
-I found that good prompts lead to good responses. And there was also some Stack Overflow at the source of the
-AI responses which I have used many times in the past.
+create them in some cases. Fortunately, the Python community is vast and I quickly found examples which could be
+converted to my specific use case. Between the Copilot responses embedded in Bing and Gemini,
+I found that good prompts lead to good responses. There was also some Stack Overflow and
+[GeeksforGeeks](https://www.geeksforgeeks.org/) sprinkled in which I have used many times in the past.
 
 Now that we have locations it is time to save them and present them to the user. The "list.html" page is the main
 page of the site which displays the records (locations) that have been saved to a user's bucket list. SQLite is
@@ -46,37 +47,39 @@ page of the site which displays the records (locations) that have been saved to 
 The projects from previous problem sets taught me enough to create tables for users and their saved locations which
 provided the source for the list page to display the records in the Bootstrap card component.
 
-The search response card has an "Add" button which makes yet another Wikipedia API call to retrieve coordinates for the location to save with the brief description,
-the image URL and the title to the database because I had a requirement to map the locations on the list.
-Yes, my project leverages Google Maps to bring the locations to life. The interactive functionality of Google Maps
-is tremendous. Having used maps in previous projects, I knew this would be a great feature in this site. Google's documentation
-is exceptional. It is thorough, accurate and up-to-date. It didn't take long to implement and customize the map to
-look and behave as I envisioned.
+The "Add" button on search response card makes yet another Wikipedia API call to retrieve coordinates
+which along with the brief description, the image URL and the title are saved to the database because of the
+requirement to map the locations on an interactive map.
+The project leverages Google Maps to bring the locations to life. The interactive functionality of Google Maps
+is tremendous. Having used maps in previous projects, I knew this would be a great addition to the project.
+Google's documentation is exceptional as it is thorough, accurate and current. It didn't take long to implement
+and customize the map to look and behave as I envisioned.
 
 Next, I wanted users to check items off their bucket list. Once they visit their location or even as they travel to
-reach it, they can create journal entries to record their thoughts and life events. A journal entry marks their location
-as visited in the first iteration of the site. The third table in the database, "journal" stores these entries
-and has a foreign key relationship to the bucket_lists table to tie them all together. Users can use this feature as
-a running journal and make multiple entries for each location as they progress or remember additional details.
+reach it, they can create journal entries to record their thoughts and life events. A single journal entry marks the
+location as visited both on the main list page and changes the color of the marker on the map. The third table in the
+database, "journal" stores these entries and has a foreign key relationship to the bucket_lists table to tie them all
+together. Users can use this feature as a running journal and make multiple entries for each location as they
+progress or remember additional details.
 
 Finally, once all of the functional requirements have been addressed it is time to improve the design. I tapped Google's
 Gemini by submitting my login page template code and asking Gemini to improve my template to be more "professional and
 contemporary". I was shocked by the recommendation to use a two column structure with a dark overlay and white text
-to improve readability. While Gemini didn't produce code that properly rendered the stock image from Unsplash, I know
+to improve readability. While Gemini's code didn't properly render the stock image from Unsplash, I know both
 CSS and Unsplash and was able to find an image then implement it using CSS in the style.css file. I experimented with
 some variants of this design while updating the rest of the site but landed on the same basic principles for consistency.
 The end result is a semi-professional looking site that I am proud to submit and share with friends and colleagues.
 
 Time will tell if I take this to the next level. The domain, travelbucketlist.com has been purchased and while there
-is not currently a site at the domain, it is listed for sale for $29,999.00. I could search for a variant of
+is not currently a site at the domain, it is priced at $29,999.00. I could search for a variant of
 the domain and take it further. My initial research reveals that a Flask project can be hosted on Google Cloud using
-their Google Run technology. What I've created so far is a good start but to pursue something further will require
+the Google Run technology. What I've created so far is a good start but to pursue something further will require
 additional features. The first one is likely an external database to handle the volume of users with their many destinations.
 Even the few users that I've created while developing the project reveals that the bucket_lists table could grow to be
 quite large. While I like SQLite, I would look at GCP's Firebase or Firestore technologies as I've found them easy to implement and
-very cost effective in past projects. Firebase Authentication service also offers the many authentication options that users
+very cost effective in past projects. The Firebase Authentication service also offers the many authentication options that users
 expect in today's modern websites like the ability to log in using Facebook or Google. Next, users should be able to upload
-their own images. Everyone has smartphones and while my Google account has a running history of my travels, this site should
+their own images. Everyone has smartphones and I know my Google account has a running history of my travels, this site should
 provide the functionality for users to upload their images (perhaps from Google drive) to add them to their journal.
 
 ```
