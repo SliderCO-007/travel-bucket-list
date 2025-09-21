@@ -28,7 +28,7 @@ Wikipedia data is vast and more like an online encyclopedia with many API endpoi
 different types of data. Initially the general search endpoint provided the required data in the response.
 It returns a short description, a thumbnail and a page title. Upon implementing this API call, it was apparent that
 the returned thumbnail image was unacceptable. Since it is a "thumbnail", the image is such a low resolution that most were
-pixelated and grainy when displayed. Further research revealed that Wikipedia provided another endpoint which can be
+pixelated and grainy when displayed in the Bootstrap card. Further research revealed that Wikipedia provided another endpoint which can be
 called with parameters defining the size of an image needed. So I learned how to stack API calls, or call them
 sequentially. The application now makes a call to the search API then uses the page title in the response to make a
 second API call to retrieve a higher quality image which is displayed to the user.
@@ -47,15 +47,15 @@ page of the site which displays the records (locations) that have been saved to 
 The projects from previous problem sets taught me enough to create tables for users and their saved locations which
 provided the source for the list page to display the records in the Bootstrap card component.
 
-The "Add" button on search response card makes yet another Wikipedia API call to retrieve coordinates
-which along with the brief description, the image URL and the title are saved to the database because of the
+The "Add" button on the search response card makes yet another Wikipedia API call to retrieve coordinates
+which along with the brief description, the image URL and the title are saved to the database to fulfill the
 requirement to map the locations on an interactive map.
 The project leverages Google Maps to bring the locations to life. The interactive functionality of Google Maps
 is tremendous. Having used maps in previous projects, I knew this would be a great addition to the project.
 Google's documentation is exceptional as it is thorough, accurate and current. It didn't take long to implement
 and customize the map to look and behave as I envisioned.
 
-Next, I wanted users to check items off their bucket list. Once they visit their location or even as they travel to
+Next, users need the ability to check items off their bucket list. Once they visit their destination or even as they travel to
 reach it, they can create journal entries to record their thoughts and life events. A single journal entry marks the
 location as visited both on the main list page and changes the color of the marker on the map. The third table in the
 database, "journal" stores these entries and has a foreign key relationship to the bucket_lists table to tie them all
