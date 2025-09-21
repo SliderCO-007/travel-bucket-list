@@ -5,7 +5,7 @@
 #### Description:
 
 Travel Bucket List is a website where registered users can create a bucket list of dream destinations
-that they aspire to visit before their time on this Earth expires. Visitors can register as users
+that they aspire to visit before their time on Earth expires. Visitors can register as users
 then search for destinations and add them to their personal travel bucket list. Once a destination is saved to their list, they can view all of their
 destinations on the main page or on an interactive map. Using the street view, users can see actual images of their destination
 and visualize themselves being there! Finally, users can check the bucket list item off their list and mark it done
@@ -23,7 +23,7 @@ quickly recognized that the Trip Advisor data was very focused on commercial con
 expeditions. While this is exciting, it is not the type of site I wanted to create. Then I found Wikipedia's
 APIs.
 
-Wikipedia data is vast and more like an online encyclopedia with several different API endpoints for
+Wikipedia data is vast and more like an online encyclopedia with many API endpoints for
 different types of data. Initially the general search endpoint provided the required data in the response.
 It returns a short description, a thumbnail and a page title. Upon implementing this API call, I realized that
 the image was unacceptable. Since it was a "thumbnail", it returned such low resolution that most images were
@@ -73,9 +73,11 @@ the domain and take it further. My initial research reveals that a Flask project
 their Google Run technology. What I've created so far is a good start but to pursue something further will require
 additional features. The first one is likely an external database to handle the volume of users with their many destinations.
 Even the few users that I've created while developing the project reveals that the bucket_lists table could grow to be
-quite large. Next, users should be able to upload their own images. Everyone has smartphones and while my Google account
-has a running history of my travels, this site should provide the functionality for users to upload their images (perhaps from
-Google drive) to add them to their journal.
+quite large. While I like SQLite, I would look at GCP's Firebase or Firestore technologies as I've found them easy to implement and
+very cost effective in past projects. Firebase Authentication service also offers the many authentication options that users
+expect in today's modern websites like the ability to log in using Facebook or Google. Next, users should be able to upload
+their own images. Everyone has smartphones and while my Google account has a running history of my travels, this site should
+provide the functionality for users to upload their images (perhaps from Google drive) to add them to their journal.
 
 ```
 |-- README.md
