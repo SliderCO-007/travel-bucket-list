@@ -47,7 +47,7 @@ page of the site which displays the records (locations) that have been saved to 
 The projects from previous problem sets taught me enough to create tables for users and their saved locations which
 provided the source for the list page to display the records in the Bootstrap card component.
 
-The "Add" button on the search response card makes yet another Wikipedia API call to retrieve coordinates
+The "Add" button on the search response card invokes yet another Wikipedia API call to retrieve coordinates
 which along with the brief description, the image URL and the title are saved to the database to fulfill the
 requirement to map the locations on an interactive map.
 The project leverages Google Maps to bring the locations to life. The interactive functionality of Google Maps
@@ -134,7 +134,8 @@ provide the functionality for users to upload their images (perhaps from Google 
 debugging and for design recommendations.
 
 [Wikipedia APIs](https://api.wikimedia.org/wiki/API_catalog) leveraged for searching and images. One API is first used to search then a
-second API is called to get a better quality image for the site.
+second API is called to get a better quality image for the site. The same endpoint that is used for the image is called to request coordinates
+when the function to add the location to the database is executed.
 
 [Google Maps API](https://developers.google.com/maps/documentation/javascript/) enables users to interactively view their destinations.
 A high level view displaying all locations on their list is their starting point. Then users can zoom in
@@ -145,6 +146,8 @@ and use Google's street view to explore a city, town or village.
 In Dev workspace
 
 Install Python (version used is `Python 3.13.7`)
+
+Clone the repository to your local workspace.
 
 Create Virtual Environment
 
