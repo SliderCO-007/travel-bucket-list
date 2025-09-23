@@ -147,7 +147,11 @@ In Dev workspace
 
 Install Python (version used is `Python 3.13.7`)
 
-Clone the repository to your local workspace.
+Clone the repository to your local workspace
+
+```shell
+$ git clone https://github.com/SliderCO-007/travel-bucket-list.git
+```
 
 Create Virtual Environment
 
