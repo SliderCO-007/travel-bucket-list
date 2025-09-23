@@ -153,6 +153,12 @@ Clone the repository to your local workspace
 $ git clone https://github.com/SliderCO-007/travel-bucket-list.git
 ```
 
+Change to new directory
+
+```shell
+$ cd travel-bucket-list
+```
+
 Create Virtual Environment
 
 ```shell
